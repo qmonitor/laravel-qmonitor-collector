@@ -57,9 +57,6 @@ class QmonitorEventsSubscriber
 
             $payload = QmonitorJobPayload::make($event);
 
-            ray($payload->toArray());
-            ray(Qmonitor::pingUrl());
-
             // check if the job type is being collected
             if (! Qmonitor::monitoredTypes()->has($payload->type)) {
                 return;
