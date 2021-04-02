@@ -26,7 +26,6 @@ class TestCase extends Orchestra
     {
         $app['config']->set('qmonitor.app_id', 'abc123');
         $app['config']->set('qmonitor.signing_secret', 'def456');
-        // $app['config']->set('qmonitor.endpoint', 'https://success.qmonitor.io');
 
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [

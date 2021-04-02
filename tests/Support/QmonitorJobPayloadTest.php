@@ -298,8 +298,11 @@ class QmonitorJobPayloadTest extends TestCase
     protected function prepareBatch()
     {
         if (! class_exists('CreateJobBatchesTable')) {
-            $this->artisan('queue:batches-table');
+            $this->artisan('queue:batches-table')
+                ->assertExitCode(0);
         }
+
+        $this->artisan('migrate')->assertExitCode(0);
 
         $pendingBatch = Bus::batch([
             $job = new FakeBatchableTestJob,
