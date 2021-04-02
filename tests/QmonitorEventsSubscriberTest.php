@@ -139,7 +139,7 @@ class QmonitorEventsSubscriberTest extends TestCase
     }
 
     /** @test */
-    public function it_respects_the_traked_type_config()
+    public function it_respects_the_monitored_type_config()
     {
         Queue::fake();
         Queue::assertNothingPushed();
@@ -186,6 +186,10 @@ class QmonitorEventsSubscriberTest extends TestCase
     /** @test */
     public function it_handles_encrypted_jobs()
     {
+        if (! interface_exists(\Illuminate\Contracts\Queue\ShouldBeEncrypted::class)) {
+            return $this->assertTrue(true);
+        }
+
         Queue::fake();
         Queue::assertNothingPushed();
 
