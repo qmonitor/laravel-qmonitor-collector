@@ -2,12 +2,11 @@
 
 namespace Qmonitor\Tests;
 
-use Illuminate\Support\Str;
-use Illuminate\Encryption\Encrypter;
-use Qmonitor\QmonitorServiceProvider;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Str;
+use Orchestra\Testbench\TestCase as Orchestra;
+use Qmonitor\QmonitorServiceProvider;
 
 class TestCase extends Orchestra
 {

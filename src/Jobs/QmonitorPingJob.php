@@ -2,22 +2,22 @@
 
 namespace Qmonitor\Jobs;
 
-use Throwable;
-use Qmonitor\Qmonitor;
 use Illuminate\Bus\Queueable;
-use Qmonitor\Support\JobPayload;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Qmonitor\Support\QmonitorJobPayload;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Qmonitor\Qmonitor;
+use Throwable;
 
 class QmonitorPingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var array
@@ -25,12 +25,12 @@ class QmonitorPingJob implements ShouldQueue
     public $payload;
 
     /**
-     * @var integer
+     * @var int
      */
     public $tries = 20;
 
     /**
-     * @var integer
+     * @var int
      */
     public $maxExceptions = 3;
 

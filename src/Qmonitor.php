@@ -3,11 +3,9 @@
 namespace Qmonitor;
 
 use Illuminate\Support\Collection;
-use Qmonitor\Jobs\QmonitorPingJob;
 use Illuminate\Support\Facades\Http;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
-use Qmonitor\Support\QmonitorJobPayload;
-use Qmonitor\Support\QmonitorSetupPayload;
+use Qmonitor\Jobs\QmonitorPingJob;
 
 class Qmonitor
 {
@@ -45,7 +43,7 @@ class Qmonitor
     {
         return collect(config('qmonitor.monitor_types'))
             ->filter(function ($type) {
-                return !! $type;
+                return ! ! $type;
             });
     }
 

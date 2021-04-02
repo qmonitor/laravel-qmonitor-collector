@@ -2,15 +2,14 @@
 
 namespace Qmonitor\EventHandlers;
 
-use Throwable;
-use Qmonitor\Qmonitor;
-use Qmonitor\Jobs\QmonitorPingJob;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Queue\Events\JobFailed;
-use Qmonitor\Jobs\QmonitorHeartbeatJob;
-use Qmonitor\Support\QmonitorJobPayload;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Contracts\Events\Dispatcher;
+use Qmonitor\Jobs\QmonitorPingJob;
+use Qmonitor\Qmonitor;
+use Qmonitor\Support\QmonitorJobPayload;
+use Throwable;
 
 class QmonitorEventsSubscriber
 {

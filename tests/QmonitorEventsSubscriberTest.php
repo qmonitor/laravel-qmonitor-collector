@@ -3,21 +3,18 @@
 namespace Qmonitor\Tests;
 
 use Exception;
-use Qmonitor\Qmonitor;
-use Illuminate\Queue\Jobs\SyncJob;
-use Qmonitor\Jobs\QmonitorPingJob;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Client\Request;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Jobs\SyncJob;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Queue\Events\JobQueued;
-use Illuminate\Support\Facades\Config;
+use Qmonitor\Jobs\QmonitorPingJob;
 use Qmonitor\Support\QmonitorJobPayload;
-use Illuminate\Queue\Events\JobProcessed;
-use Qmonitor\Tests\Fixtures\FakeJobEvent;
-use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Container\Container;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
 
@@ -64,7 +61,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-
     /** @test */
     public function it_listens_for_job_processed_event()
     {
@@ -83,7 +79,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         });
         Queue::assertNothingPushed();
     }
-
 
     /** @test */
     public function it_listens_for_job_failed_event()
@@ -107,7 +102,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-
     /** @test */
     public function it_checks_for_monitor_enabled_flag()
     {
@@ -125,7 +119,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Http::assertNothingSent();
         Queue::assertNothingPushed();
     }
-
 
     /** @test */
     public function it_checks_for_qmonitor_app_id()
@@ -145,7 +138,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-
     /** @test */
     public function it_respects_the_traked_type_config()
     {
@@ -163,7 +155,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Http::assertNothingSent();
         Queue::assertNothingPushed();
     }
-
 
     /** @test */
     public function it_ignores_qmonitor_ping_jobs()
@@ -192,7 +183,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-
     /** @test */
     public function it_handles_encrypted_jobs()
     {
@@ -220,7 +210,6 @@ class QmonitorEventsSubscriberTest extends TestCase
         });
         Queue::assertNothingPushed();
     }
-
 
     /** @test */
     public function it_dispatches_a_job_if_an_error_is_thrown()

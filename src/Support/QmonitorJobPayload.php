@@ -2,20 +2,19 @@
 
 namespace Qmonitor\Support;
 
-use Qmonitor\Qmonitor;
-use Illuminate\Support\Arr;
-use Illuminate\Queue\QueueManager;
+use Illuminate\Broadcasting\BroadcastEvent;
 use Illuminate\Bus\BatchRepository;
-use Illuminate\Container\Container;
-use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Events\CallQueuedListener;
+use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Broadcasting\BroadcastEvent;
-use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Queue\QueueManager;
+use Illuminate\Support\Arr;
+use Qmonitor\Qmonitor;
 
 class QmonitorJobPayload
 {

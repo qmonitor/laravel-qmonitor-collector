@@ -2,36 +2,32 @@
 
 namespace Qmonitor\Tests;
 
-use Mockery;
-use StdClass;
 use Exception;
-use Qmonitor\Qmonitor;
-use Qmonitor\Tests\TestCase;
-use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Bus\BatchRepository;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
-use Qmonitor\Tests\Fixtures\FakeMail;
-use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Support\Facades\Config;
-use Qmonitor\Tests\Fixtures\FakeModel;
-use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Mail\SendQueuedMailable;
-use Qmonitor\Support\QmonitorJobPayload;
-use Illuminate\Events\CallQueuedListener;
-use Illuminate\Queue\Events\JobProcessed;
-use Qmonitor\Tests\Fixtures\FakeJobEvent;
-use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Broadcasting\BroadcastEvent;
+use Illuminate\Bus\BatchRepository;
 use Illuminate\Contracts\Container\Container;
-use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
-use Qmonitor\Tests\Fixtures\FakePassingTestJob;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Notifications\SendQueuedNotifications;
-use Qmonitor\Tests\Fixtures\FakeJobWithEloquentModel;
-use Qmonitor\Tests\Fixtures\FakeJobWithEloquentCollection;
-use Qmonitor\Tests\Fixtures\FakeJobWithEloquentModelAndTags;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Jobs\SyncJob;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
+use Qmonitor\Qmonitor;
+use Qmonitor\Support\QmonitorJobPayload;
+use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
+use Qmonitor\Tests\Fixtures\FakeJobEvent;
+use Qmonitor\Tests\Fixtures\FakeJobWithEloquentCollection;
+use Qmonitor\Tests\Fixtures\FakeJobWithEloquentModel;
+use Qmonitor\Tests\Fixtures\FakeJobWithEloquentModelAndTags;
+use Qmonitor\Tests\Fixtures\FakeMail;
+use Qmonitor\Tests\Fixtures\FakeModel;
+use Qmonitor\Tests\Fixtures\FakePassingTestJob;
+use StdClass;
 
 class QmonitorJobPayloadTest extends TestCase
 {
@@ -66,8 +62,7 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals(FakePassingTestJob::class, $jobPayload->displayName);
     }
 
-
-     /** @test */
+    /** @test */
     public function it_resolves_the_event_type()
     {
         $jobPayload = QmonitorJobPayload::make(new JobProcessing($this->connection, $this->syncJob));
@@ -83,7 +78,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals('unknown', $jobPayload->event);
     }
 
-
     /** @test */
     public function it_determines_if_the_job_is_encrypted()
     {
@@ -97,7 +91,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertTrue($jobPayload->encrypted);
     }
 
-
     /** @test */
     public function it_records_the_event_timestamp()
     {
@@ -107,7 +100,6 @@ class QmonitorJobPayloadTest extends TestCase
         // Then
         $this->assertNotNull($jobPayload->exactTimestamp);
     }
-
 
     /** @test */
     public function it_resolves_the_hostname()
@@ -119,7 +111,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals(gethostname(), $jobPayload->hostname);
     }
 
-
     /** @test */
     public function it_resolves_the_app_version()
     {
@@ -129,7 +120,6 @@ class QmonitorJobPayloadTest extends TestCase
         // Then
         $this->assertEquals(app()->version(), $jobPayload->appVersion);
     }
-
 
     /** @test */
     public function it_resolves_the_php_version()
@@ -141,7 +131,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals(PHP_VERSION, $jobPayload->phpVersion);
     }
 
-
     /** @test */
     public function it_resolves_the_php_environment()
     {
@@ -152,7 +141,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals('testing', $jobPayload->environment);
     }
 
-
     /** @test */
     public function it_resolves_the_collector_version()
     {
@@ -162,7 +150,6 @@ class QmonitorJobPayloadTest extends TestCase
         // Then
         $this->assertEquals(Qmonitor::version(), $jobPayload->collectorVersion);
     }
-
 
     /** @test */
     public function it_resolves_the_type()
@@ -182,7 +169,6 @@ class QmonitorJobPayloadTest extends TestCase
         $jobPayload->setPayload($this->jobEventPayloadMock(new SendQueuedNotifications([], new StdClass, ['mail'])));
         $this->assertEquals('notification', $jobPayload->type);
     }
-
 
     /** @test */
     public function it_tags_method_overrides_the_auto_tags()
@@ -208,7 +194,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals('tag2', $jobPayload->tags[1]);
     }
 
-
     /** @test */
     public function it_determines_the_eloquent_model_tags()
     {
@@ -225,7 +210,6 @@ class QmonitorJobPayloadTest extends TestCase
         );
         $this->assertEquals([FakeModel::class.':1', FakeModel::class.':2'], $jobPayload->tags);
     }
-
 
     /** @test */
     public function it_determines_tags_from_eloquent_collections()
@@ -246,7 +230,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals([FakeModel::class.':3', FakeModel::class.':4'], $jobPayload->tags);
     }
 
-
     /** @test */
     public function it_respectes_the_tags_config_flag()
     {
@@ -261,7 +244,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEmpty($jobPayload->tags);
     }
 
-
     /** @test */
     public function it_resolves_the_exception_details()
     {
@@ -275,7 +257,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals($message, $jobPayload->exception['message']);
     }
 
-
     /** @test */
     public function it_returns_null_for_non_existing_prop()
     {
@@ -285,7 +266,6 @@ class QmonitorJobPayloadTest extends TestCase
         // Then
         $this->assertNull($jobPayload->someNonExistingProp);
     }
-
 
     /** @test */
     public function it_resolves_the_batch()
@@ -307,7 +287,6 @@ class QmonitorJobPayloadTest extends TestCase
         $this->assertEquals($batch->progress(), $jobPayload->batch['progress']);
         $this->assertEquals($batch->finishedAt, $jobPayload->batch['finishedAt']);
     }
-
 
     protected function prepareBatch()
     {
