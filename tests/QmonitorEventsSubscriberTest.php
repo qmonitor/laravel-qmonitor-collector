@@ -230,9 +230,12 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertNotSent(function ($request) {
-            return $request->url() == Config::get('qmonitor.endpoint');
-        });
+        $this->assertEmpty(
+            Http::recorded(function ($request) {
+                return $request->url() == Config::get('qmonitor.endpoint');
+            })
+        );
+
         Queue::assertPushed(QmonitorPingJob::class);
     }
 }
