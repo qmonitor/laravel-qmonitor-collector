@@ -225,6 +225,8 @@ class QmonitorEventsSubscriberTest extends TestCase
             'qmonitor.endpoint' => 'https://fail.qmonitor.io',
         ]);
 
+        $this->assertSame(Config::get('qmonitor.endpoint'), 'https://fail.qmonitor.io');
+
         Queue::fake();
         Queue::assertNothingPushed();
 
@@ -232,7 +234,9 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertSentCount(2); // 2 retries
+        Http::assertNotSent(function ($request) {
+            return $request->url() == Config::get('qmonitor.endpoint');
+        });
         Queue::assertPushed(QmonitorPingJob::class);
     }
 }
