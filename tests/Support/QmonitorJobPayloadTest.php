@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Qmonitor\Qmonitor;
 use Qmonitor\Support\QmonitorJobPayload;
+use Qmonitor\Tests\Fixtures\FakeBatchableTestJob;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
 use Qmonitor\Tests\Fixtures\FakeJobEvent;
 use Qmonitor\Tests\Fixtures\FakeJobWithEloquentCollection;
@@ -270,6 +271,10 @@ class QmonitorJobPayloadTest extends TestCase
     /** @test */
     public function it_resolves_the_batch()
     {
+        if (! $this->app->bound(BatchRepository::class)) {
+            return $this->assertTrue(true);
+        }
+
         // Given
         $batch = $this->prepareBatch();
         $event = new JobProcessing($this->connection, $this->syncJob);
@@ -295,7 +300,7 @@ class QmonitorJobPayloadTest extends TestCase
         }
 
         $pendingBatch = Bus::batch([
-            $job = new FakePassingTestJob,
+            $job = new FakeBatchableTestJob,
         ])->name('test batch');
 
         $repository = $this->app->make(BatchRepository::class);
