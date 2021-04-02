@@ -24,10 +24,11 @@ class QmonitorEventsSubscriberTest extends TestCase
     {
         parent::setUp();
 
-        $endpoint = Config::get('qmonitor.endpoint');
+        // $endpoint = Config::get('qmonitor.endpoint');
 
         Http::fake([
-            "{$endpoint}/*" => Http::response(['message' => 'Ole!'], 200),
+            'https://fail.qmonitor.io/*' => Http::response(['message' => 'Fail!'], 400),
+            "*" => Http::response(['message' => 'Ole!'], 200),
         ]);
 
         $this->job = new FakePassingTestJob;
@@ -148,6 +149,8 @@ class QmonitorEventsSubscriberTest extends TestCase
             'qmonitor.monitor_types.job' => false,
         ]);
 
+        $this->assertFalse(Config::get('qmonitor.monitor_types.job'));
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
@@ -218,10 +221,6 @@ class QmonitorEventsSubscriberTest extends TestCase
     /** @test */
     public function it_dispatches_a_job_if_an_error_is_thrown()
     {
-        Http::fake([
-            'https://fail.qmonitor.io/*' => Http::response(['message' => 'Fail!'], 400),
-        ]);
-
         Config::set([
             'qmonitor.endpoint' => 'https://fail.qmonitor.io',
         ]);
