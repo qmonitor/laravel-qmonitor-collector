@@ -19,6 +19,11 @@ class QmonitorSetup extends Command
 
     public $description = 'Setup Qmonitor configs and send test heartbeat to qmonitor.io';
 
+    /**
+     * @var string
+     */
+    protected $signingSecret;
+
     public function handle()
     {
         // prevent accidental setup runs
