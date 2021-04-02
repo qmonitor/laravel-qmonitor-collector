@@ -1,0 +1,83 @@
+<?php
+
+namespace Qmonitor\EventHandlers;
+
+use Throwable;
+use Qmonitor\Qmonitor;
+use Qmonitor\Jobs\QmonitorPingJob;
+use Illuminate\Queue\Events\JobFailed;
+use Qmonitor\Jobs\QmonitorHeartbeatJob;
+use Qmonitor\Support\QmonitorJobPayload;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Contracts\Events\Dispatcher;
+
+class QmonitorEventsSubscriber
+{
+    /**
+     * Subscribe to queue jobs events
+     *
+     * @param  Dispatcher $events
+     * @return void
+     */
+    public function subscribe(Dispatcher $events): void
+    {
+        $events->listen(
+            [
+                JobProcessing::class,
+                JobProcessed::class,
+                JobFailed::class,
+            ],
+            [static::class, 'handleJobEvent']
+        );
+    }
+
+    /**
+     * Job events handler method
+     *
+     * @param  mixed $event
+     * @return void
+     */
+    public function handleJobEvent($event)
+    {
+        // try sending the payload using the current running job process
+        try {
+            if (! config('qmonitor.enabled') || ! config('qmonitor.app_id') || ! config('qmonitor.signing_secret')) {
+                return;
+            }
+
+            // prevent processed event if the job is marked as failed
+            if ($event instanceof JobProcessed && $event->job->hasFailed()) {
+                return;
+            }
+
+            // check if the job name is not our ping
+            if (! Qmonitor::isMonitoredJob($event->job->resolveName())) {
+                return;
+            }
+
+            $payload = QmonitorJobPayload::make($event);
+
+            ray($payload->toArray());
+            ray(Qmonitor::pingUrl());
+
+            // check if the job type is being collected
+            if (! Qmonitor::monitoredTypes()->has($payload->type)) {
+                return;
+            }
+
+            // send payload
+            Qmonitor::sendPing($payload->toArray());
+        } catch (Throwable $e) {
+            // if anything goes wrong
+            // dispatch a job with the payload so we can handle retries
+            if (! isset($payload)) {
+                return;
+            }
+
+            QmonitorPingJob::dispatch(
+                $payload->toArray()
+            );
+        }
+    }
+}
