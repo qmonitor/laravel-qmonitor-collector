@@ -3,15 +3,14 @@
 namespace Qmonitor\Commands;
 
 use Exception;
-use Qmonitor\Qmonitor;
+use Illuminate\Console\Command;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Console\Command;
+use Qmonitor\Qmonitor;
 use Qmonitor\QmonitorServiceProvider;
-use Illuminate\Support\Facades\Config;
 use sixlive\DotenvEditor\DotenvEditor;
-use Qmonitor\Jobs\QmonitorHeartbeatJob;
-use Illuminate\Http\Client\RequestException;
 
 class QmonitorSetup extends Command
 {
@@ -72,6 +71,7 @@ class QmonitorSetup extends Command
 
         if (empty($app) && empty($secret)) {
             $this->task('Checking for existing app configs');
+
             return true;
         }
 
@@ -145,7 +145,7 @@ class QmonitorSetup extends Command
                     ->set('QMONITOR_SECRET', '')
                     ->save();
 
-                    return true;
+                return true;
             } catch (InvalidArgumentException $e) {
                 return false;
             }

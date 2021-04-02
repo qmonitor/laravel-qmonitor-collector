@@ -2,28 +2,30 @@
 
 namespace Qmonitor\Jobs;
 
-use Throwable;
-use Qmonitor\Qmonitor;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Qmonitor\Qmonitor;
+use Throwable;
 
 class QmonitorHeartbeatJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
-     * @var integer
+     * @var int
      */
     public $tries = 3;
 
     /**
-     * @var integer
+     * @var int
      */
     public $maxExceptions = 3;
 

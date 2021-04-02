@@ -2,10 +2,10 @@
 
 namespace Qmonitor;
 
-use Qmonitor\Commands\QmonitorSetup;
-use Qmonitor\Commands\QmonitorTest;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Qmonitor\Commands\QmonitorSetup;
+use Qmonitor\Commands\QmonitorTest;
 use Qmonitor\EventHandlers\QmonitorEventsSubscriber;
 
 class QmonitorServiceProvider extends ServiceProvider

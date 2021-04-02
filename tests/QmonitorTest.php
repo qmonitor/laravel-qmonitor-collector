@@ -2,16 +2,15 @@
 
 namespace Qmonitor\Tests;
 
-use Qmonitor\Qmonitor;
-use Illuminate\Support\Str;
-use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Config;
-use Qmonitor\Support\QmonitorJobPayload;
-use Illuminate\Queue\Events\JobProcessing;
-use Qmonitor\Support\QmonitorSetupPayload;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Http\Client\Request;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Jobs\SyncJob;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Qmonitor\Qmonitor;
+use Qmonitor\Support\QmonitorJobPayload;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
 
 class QmonitorTest extends TestCase
@@ -33,20 +32,17 @@ class QmonitorTest extends TestCase
         $this->assertNotEmpty(Qmonitor::version());
     }
 
-
     /** @test */
     public function it_returns_the_monitored_job_types()
     {
         $this->assertEquals(Qmonitor::monitoredTypes()->toArray(), config('qmonitor.monitor_types'));
     }
 
-
     /** @test */
     public function it_returns_the_tags_flag()
     {
         $this->assertEquals(Qmonitor::tagsEnabled(), config('qmonitor.tags'));
     }
-
 
     /** @test */
     public function it_returns_the_ping_url()
@@ -55,14 +51,12 @@ class QmonitorTest extends TestCase
         $this->assertEquals(Qmonitor::pingUrl(), $url);
     }
 
-
     /** @test */
     public function it_returns_the_setup_url()
     {
         $url = sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), config('qmonitor.app_id'));
         $this->assertEquals(Qmonitor::setupUrl(), $url);
     }
-
 
     /** @test */
     public function it_sends_the_ping_payload()
@@ -94,7 +88,6 @@ class QmonitorTest extends TestCase
                     $request['type'] == 'job';
         });
     }
-
 
     /** @test */
     public function it_sends_the_setup_payload()
