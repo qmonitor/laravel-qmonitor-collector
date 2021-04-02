@@ -53,7 +53,6 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) {
             return $request['displayName'] == FakePassingTestJob::class &&
                     $request['event'] == 'processing' &&
@@ -72,7 +71,6 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessed('sync', $this->syncJob));
         });
 
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) {
             return $request['displayName'] == FakePassingTestJob::class &&
                     $request['event'] == 'processed' &&
@@ -93,7 +91,6 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobFailed('sync', $this->syncJob, $exception));
         });
 
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) use ($message) {
             return $request['displayName'] == FakePassingTestJob::class &&
                     $request['event'] == 'failed' &&
@@ -211,7 +208,6 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessed('sync', $syncJob));
         });
 
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) {
             return $request['displayName'] == FakeEncryptedJob::class;
         });

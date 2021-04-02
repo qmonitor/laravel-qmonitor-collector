@@ -81,7 +81,6 @@ class QmonitorTest extends TestCase
         Qmonitor::sendPing($jobPayload->toArray());
 
         // Then
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) {
             return $request['displayName'] == FakePassingTestJob::class &&
                     $request['event'] == 'processing' &&
@@ -101,7 +100,6 @@ class QmonitorTest extends TestCase
         Qmonitor::sendSetup($setupPayload);
 
         // Then
-        Http::assertSentCount(1);
         Http::assertSent(function (Request $request) use ($secret) {
             return $request['signing_secret'] == $secret;
         });

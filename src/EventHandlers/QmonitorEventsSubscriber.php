@@ -37,7 +37,7 @@ class QmonitorEventsSubscriber
      * @param  mixed $event
      * @return void
      */
-    public function handleJobEvent($event)
+    public static function handleJobEvent($event)
     {
         // try sending the payload using the current running job process
         try {
