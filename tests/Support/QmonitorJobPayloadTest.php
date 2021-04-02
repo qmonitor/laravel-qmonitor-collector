@@ -82,6 +82,10 @@ class QmonitorJobPayloadTest extends TestCase
     /** @test */
     public function it_determines_if_the_job_is_encrypted()
     {
+        if (! interface_exists(\Illuminate\Contracts\Queue\ShouldBeEncrypted::class)) {
+            return $this->assertTrue(true);
+        }
+
         // When
         $jobPayload = QmonitorJobPayload::make($this->event);
         $this->assertFalse($jobPayload->encrypted);
@@ -172,7 +176,7 @@ class QmonitorJobPayloadTest extends TestCase
     }
 
     /** @test */
-    public function it_tags_method_overrides_the_auto_tags()
+    public function the_tags_method_overrides_the_auto_tags()
     {
         // When
         $jobPayload = QmonitorJobPayload::make($this->event);
@@ -186,8 +190,6 @@ class QmonitorJobPayloadTest extends TestCase
         $jobPayload->setPayload(
             $this->jobEventPayloadMock(new FakeJobWithEloquentModelAndTags($first, $second))
         );
-
-        ray($jobPayload->tags);
 
         // Then
         $this->assertCount(2, $jobPayload->tags);
