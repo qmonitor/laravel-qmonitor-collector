@@ -114,7 +114,7 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertNothingSent();
+        $this->assertEmpty(Http::recorded());
         Queue::assertNothingPushed();
     }
 
@@ -132,7 +132,7 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertNothingSent();
+        $this->assertEmpty(Http::recorded());
         Queue::assertNothingPushed();
     }
 
@@ -152,7 +152,7 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertNothingSent();
+        $this->assertEmpty(Http::recorded());
         Queue::assertNothingPushed();
     }
 
@@ -179,7 +179,7 @@ class QmonitorEventsSubscriberTest extends TestCase
             $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
         });
 
-        Http::assertNothingSent();
+        $this->assertEmpty(Http::recorded());
         Queue::assertNothingPushed();
     }
 
