@@ -37,7 +37,7 @@ class QmonitorPingJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param \Qmonitor\Support\QmonitorJobPayload $payload
+     * @param array $payload
      *
      * @return void
      */
@@ -66,7 +66,7 @@ class QmonitorPingJob implements ShouldQueue
         } catch (RequestException $e) {
             Log::error('Could not reach '.parse_url($this->url(), PHP_URL_HOST), [
                 'status' => $e->response->status() ?? null,
-                'response' => $e->response->json('message') ?? null,
+                'response' => $e->response['message'] ?? null,
                 'url' => $this->url(),
             ]);
 

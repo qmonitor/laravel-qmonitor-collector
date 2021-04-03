@@ -131,8 +131,7 @@ class ExtractTags
      */
     protected static function getValue(ReflectionProperty $property, $target)
     {
-        if (method_exists($property, 'isInitialized') &&
-            ! $property->isInitialized($target)) {
+        if (! $property->isInitialized($target)) {
             return;
         }
 

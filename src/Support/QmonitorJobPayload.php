@@ -21,28 +21,28 @@ class QmonitorJobPayload
     /**
      * The event
      *
-     * @var string
+     * @var object
      */
     protected $event;
 
     /**
      * The job
      *
-     * @var string
+     * @var object
      */
     protected $job;
 
     /**
      * The payload
      *
-     * @var string
+     * @var array
      */
     protected $payload;
 
     /**
      * The comand
      *
-     * @var array
+     * @var mixed
      */
     protected $command;
 
@@ -51,7 +51,7 @@ class QmonitorJobPayload
      *
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * Prepare paylod for queue event
@@ -118,7 +118,7 @@ class QmonitorJobPayload
             'retryOf' => $this->payload['retry_of'] ?? null,
             'event' => $this->determineEventType(),
             'exception' => $this->getExceptionData(),
-            'batch' => optional($this->command)->batchId ? $this->findBatch($this->command->batchId) : null,
+            'batch' => ! empty($this->command->batchId) ? $this->findBatch($this->command->batchId) : null,
             'pendingJobs' => $this->getQueueSize(),
             'hostname' => gethostname(),
             'environment' => app()->environment(),
@@ -192,7 +192,7 @@ class QmonitorJobPayload
      */
     public function set(array $values)
     {
-        $this->data = array_merge($this->data ?? [], $values);
+        $this->data = array_merge($this->data, $values);
 
         return $this;
     }
@@ -200,7 +200,7 @@ class QmonitorJobPayload
     /**
      * Get the "command" for the job.
      *
-     * @return string
+     * @return mixed
      */
     public function command()
     {
