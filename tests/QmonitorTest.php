@@ -54,8 +54,9 @@ class QmonitorTest extends TestCase
     /** @test */
     public function it_returns_the_setup_url()
     {
-        $url = sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), config('qmonitor.app_id'));
-        $this->assertEquals(Qmonitor::setupUrl(), $url);
+        $appUuid = Str::random();
+        $url = sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), $appUuid);
+        $this->assertEquals(Qmonitor::setupUrl($appUuid), $url);
     }
 
     /** @test */
@@ -97,7 +98,7 @@ class QmonitorTest extends TestCase
         ];
 
         // When
-        Qmonitor::sendSetup($setupPayload);
+        Qmonitor::sendSetup(Str::random(), $setupPayload);
 
         // Then
         Http::assertSent(function (Request $request) use ($secret) {
