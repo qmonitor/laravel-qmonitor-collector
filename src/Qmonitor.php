@@ -52,6 +52,8 @@ class Qmonitor
      *
      * @param array $payload
      *
+     * @throws \Illuminate\Http\Client\RequestException
+     *
      * @return \Illuminate\Http\Client\Response
      */
     public static function sendPing(array $payload)
@@ -69,6 +71,8 @@ class Qmonitor
 
     /**
      * Send heartbeat to Qmonitor
+     *
+     * @throws \Illuminate\Http\Client\RequestException
      *
      * @return \Illuminate\Http\Client\Response
      */
@@ -88,21 +92,23 @@ class Qmonitor
     /**
      * Send ping payload to Qmonitor
      *
+     * @param  string $appUuid
      * @param  array $payload
+     *
+     * @throws \Illuminate\Http\Client\RequestException
      *
      * @return \Illuminate\Http\Client\Response
      */
-    public static function sendSetup(array $payload)
+    public static function sendSetup(string $appUuid, array $payload)
     {
         return Http::timeout(5)
             ->retry(2, 500)
             ->withHeaders([
-                'Signature' => static::calculateSignature($payload, config('qmonitor.app_id')),
+                'Signature' => static::calculateSignature($payload, $appUuid),
             ])
             ->asJson()
             ->acceptJson()
-            ->post(static::setupUrl(), $payload)
-            ->throw();
+            ->post(static::setupUrl($appUuid), $payload);
     }
 
     /**
@@ -128,11 +134,13 @@ class Qmonitor
     /**
      * Setup endpoint
      *
+     * @param string $appUuid
+     *
      * @return string
      */
-    public static function setupUrl()
+    public static function setupUrl(string $appUuid)
     {
-        return sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), config('qmonitor.app_id'));
+        return sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), $appUuid);
     }
 
     public static function isMonitoredJob(string $jobName)
@@ -155,8 +163,6 @@ class Qmonitor
      */
     protected static function calculateSignature(array $payload, string $secret)
     {
-        $payloadJson = json_encode($payload);
-
-        return hash_hmac('sha256', $payloadJson, $secret);
+        return hash_hmac('sha256', json_encode($payload), $secret);
     }
 }

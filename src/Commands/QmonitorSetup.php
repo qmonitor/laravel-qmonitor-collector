@@ -38,16 +38,16 @@ class QmonitorSetup extends Command
             return $this->failWithError('The config file was not published.');
         }
 
+        if (! $this->sendSetupPayload()) {
+            return $this->failWithError('The setup payload was not sent.');
+        }
+
         if (! $this->writeEnvFile()) {
             return $this->failWithError('The .env file was not updated.');
         }
 
         if (! $this->writeEnvExampleFile()) {
             $this->error('The .env.example file was not updated.');
-        }
-
-        if (! $this->sendSetupPayload()) {
-            return $this->failWithError('The setup payload was not sent.');
         }
 
         $this->sendTestHeartBeat();
@@ -156,7 +156,7 @@ class QmonitorSetup extends Command
     {
         return $this->task('Sending setup payload to qmonitor.io', function () {
             try {
-                Qmonitor::sendSetup([
+                Qmonitor::sendSetup($this->argument('app_id'), [
                     'signing_secret' => $this->signingSecret,
                 ]);
 
