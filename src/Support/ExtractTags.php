@@ -131,6 +131,7 @@ class ExtractTags
      */
     protected static function getValue(ReflectionProperty $property, $target)
     {
+        /** @psalm-suppress all */
         if (method_exists($property, 'isInitialized') && ! $property->isInitialized($target)) {
             return;
         }
