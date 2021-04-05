@@ -4,6 +4,7 @@ namespace Qmonitor;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Qmonitor\Commands\QmonitorHeartbeat;
 use Qmonitor\Commands\QmonitorSetup;
 use Qmonitor\Commands\QmonitorTest;
 use Qmonitor\EventHandlers\QmonitorEventsSubscriber;
@@ -45,6 +46,7 @@ class QmonitorServiceProvider extends ServiceProvider
     {
         $this->commands([
             QmonitorSetup::class,
+            QmonitorHeartbeat::class,
             QmonitorTest::class,
         ]);
 
