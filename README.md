@@ -14,7 +14,7 @@ Before running this command, you need to create and account with [qmonitor.io](h
 composer require qmonitor/laravel-qmonitor-collector
 ```
 
-##Usage
+## Usage
 
 When you create a new application on qmonitor.io, you'll get a setup key with each individual app. This setup key is used to setup things in your Laravel app by running this command:
 
