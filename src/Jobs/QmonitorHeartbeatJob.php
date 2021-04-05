@@ -50,21 +50,15 @@ class QmonitorHeartbeatJob implements ShouldQueue
         try {
             Qmonitor::sendHeartbeat();
         } catch (RequestException $e) {
-            Log::error('Could not reach '.parse_url($this->url(), PHP_URL_HOST), [
+            Log::error('Could not reach '.parse_url(Qmonitor::heartbeatUrl(), PHP_URL_HOST), [
                 'status' => $e->response->status() ?? null,
                 'response' => $e->response['message'] ?? null,
-                'url' => $this->url(),
+                'url' => Qmonitor::heartbeatUrl(),
             ]);
 
             $this->release(15);
         } catch (Throwable $e) {
-            report($e);
-            $this->fail($e);
+            throw $e;
         }
-    }
-
-    public function url()
-    {
-        return Qmonitor::heartbeatUrl();
     }
 }
