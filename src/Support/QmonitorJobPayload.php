@@ -253,7 +253,7 @@ class QmonitorJobPayload
 
         return Arr::only(
             $batch->toArray(),
-            ['id', 'name', 'totalJobs', 'pendingJobs', 'processedJobs', 'progress', 'failedJobs', 'finishedAt']
+            ['id', 'name', 'totalJobs', 'pendingJobs', 'processedJobs', 'progress', 'failedJobs', 'finishedAt', 'cancelledAt']
         );
     }
 
