@@ -81,11 +81,11 @@ class Qmonitor
         return Http::timeout(5)
             ->retry(2, 500)
             ->withHeaders([
-                'Signature' => static::calculateSignature([], config('qmonitor.signing_secret')),
+                'Signature' => static::calculateSignature(static::heartbeatPayload(), config('qmonitor.signing_secret')),
             ])
             ->asJson()
             ->acceptJson()
-            ->post(static::heartbeatUrl())
+            ->post(static::heartbeatUrl(), static::heartbeatPayload())
             ->throw();
     }
 
@@ -143,6 +143,13 @@ class Qmonitor
         return sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), $appUuid);
     }
 
+    /**
+     * Determine if the given job can be monitored
+     *
+     * @param  string  $jobName
+     *
+     * @return boolean
+     */
     public static function isMonitoredJob(string $jobName)
     {
         return ! collect(config('qmonitor.dont_monitor'))
@@ -151,6 +158,19 @@ class Qmonitor
                 QmonitorHeartbeatJob::class,
             ])
             ->contains($jobName);
+    }
+
+     /**
+     * Compile heartbeat payload
+     *
+     * @return array
+     */
+    protected static function heartbeatPayload()
+    {
+        return [
+            'hostname' => gethostname(),
+            'environment' => app()->environment(),
+        ];
     }
 
     /**
