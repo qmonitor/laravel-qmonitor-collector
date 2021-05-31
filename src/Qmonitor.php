@@ -90,25 +90,27 @@ class Qmonitor
     }
 
     /**
-     * Send ping payload to Qmonitor
+     * Send setup payload to Qmonitor
      *
-     * @param  string $appUuid
+     * @param  string $setupKey
      * @param  array $payload
      *
      * @throws \Illuminate\Http\Client\RequestException
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      */
-    public static function sendSetup(string $appUuid, array $payload)
+    public static function sendSetup(string $setupKey, array $payload)
     {
-        return Http::timeout(5)
-            ->retry(2, 500)
+        $response = Http::timeout(5)
             ->withHeaders([
-                'Signature' => static::calculateSignature($payload, $appUuid),
+                'Signature' => static::calculateSignature($payload, $setupKey),
             ])
             ->asJson()
             ->acceptJson()
-            ->post(static::setupUrl($appUuid), $payload);
+            ->post(static::setupUrl($setupKey), $payload)
+            ->throw();
+
+        return $response;
     }
 
     /**
@@ -134,13 +136,13 @@ class Qmonitor
     /**
      * Setup endpoint
      *
-     * @param string $appUuid
+     * @param string $setupKey
      *
      * @return string
      */
-    public static function setupUrl(string $appUuid)
+    public static function setupUrl(string $setupKey)
     {
-        return sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), $appUuid);
+        return sprintf('%s/apps/%s/setup', config('qmonitor.endpoint'), $setupKey);
     }
 
     /**

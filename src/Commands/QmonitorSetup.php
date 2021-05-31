@@ -14,14 +14,25 @@ use sixlive\DotenvEditor\DotenvEditor;
 
 class QmonitorSetup extends Command
 {
-    public $signature = 'qmonitor:setup {app_id : The UUID of the qmonitor.io application you are setting up}';
+    /**
+     * @var string
+     */
+    public $signature = 'qmonitor:setup {setup_key : The app setup key of the qmonitor.io application you are setting up}';
 
+    /**
+     * @var string
+     */
     public $description = 'Setup Qmonitor configs and send test heartbeat to qmonitor.io';
 
     /**
      * @var string
      */
     protected $signingSecret;
+
+    /**
+     * @var string
+     */
+    protected $appId;
 
     public function handle()
     {
@@ -114,7 +125,7 @@ class QmonitorSetup extends Command
                 (new DotenvEditor)
                     ->load(base_path('.env'))
                     ->heading('qmonitor.io')
-                    ->set('QMONITOR_APP_ID', $this->argument('app_id'))
+                    ->set('QMONITOR_APP_ID', $this->appId)
                     ->set('QMONITOR_SECRET', $this->signingSecret)
                     ->save();
             } catch (InvalidArgumentException $e) {
@@ -122,7 +133,7 @@ class QmonitorSetup extends Command
             }
 
             Config::set([
-                'qmonitor.app_id' => $this->argument('app_id'),
+                'qmonitor.app_id' => $this->appId,
                 'qmonitor.signing_secret' => $this->signingSecret,
             ]);
 
@@ -156,9 +167,13 @@ class QmonitorSetup extends Command
     {
         return $this->task('Sending setup payload to qmonitor.io', function () {
             try {
-                Qmonitor::sendSetup($this->argument('app_id'), [
+                $payload = Qmonitor::sendSetup($this->argument('setup_key'), [
                     'signing_secret' => $this->signingSecret,
                 ]);
+
+                ray($payload);
+
+                $this->appId = $payload['app_uuid'];
 
                 return true;
             } catch (RequestException $e) {
