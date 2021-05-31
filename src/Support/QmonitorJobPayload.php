@@ -98,14 +98,14 @@ class QmonitorJobPayload
     protected function prepare()
     {
         return $this->set([
-            'exactTimestamp' => now()->getPreciseTimestamp(3),
+            'exactTimestamp' => (int) now()->getPreciseTimestamp(3),
             'uuid' => $this->job->uuid(),
             'displayName' => $this->job->resolveName(),
             'type' => $this->determineType(),
             'tags' => $this->determineTags(),
             'maxTries' => $this->payload['maxTries'] ?? null,
             'maxExceptions' => $this->payload['maxExceptions'] ?? null,
-            'backoff' => $this->payload['backoff'] ?? null,
+            'backoff' => ! empty($this->payload['backoff']) ? $this->payload['backoff'] : null,
             'delay' => $this->payload['delay'] ?? null,
             'timeout' => $this->payload['timeout'] ?? null,
             'retryUntil' => $this->payload['retryUntil'] ?? null,
