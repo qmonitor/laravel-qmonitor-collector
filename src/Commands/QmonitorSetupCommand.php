@@ -40,7 +40,7 @@ class QmonitorSetupCommand extends Command
     {
         // prevent accidental setup runs
         if (! $this->checkExistingSetup()) {
-            return static::FAILURE;
+            return 1;
         }
 
         if (! $this->generateSigningSecret()) {

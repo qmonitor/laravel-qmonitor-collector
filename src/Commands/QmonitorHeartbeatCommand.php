@@ -16,13 +16,13 @@ class QmonitorHeartbeatCommand extends Command
         if (! config('qmonitor.enabled')) {
             $this->error('Qmonitor flag is set to OFF. Check the qmonitor config.');
 
-            return static::FAILURE;
+            return 1;
         }
 
         if (! config('qmonitor.app_id') || ! config('qmonitor.signing_secret')) {
             $this->error('Qmonitor app id or signing secret are not set. Make sure you ran the setup command.');
 
-            return static::FAILURE;
+            return 1;
         }
 
         QmonitorHeartbeatJob::dispatch();
