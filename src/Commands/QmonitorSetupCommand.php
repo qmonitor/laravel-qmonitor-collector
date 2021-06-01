@@ -65,16 +65,16 @@ class QmonitorSetupCommand extends Command
 
         $this->sendTestHeartBeat();
 
-        $this->newLine();
+        $this->line('');
         $this->info('Hooray! Queue monitoring is up and running!');
 
-        $this->newLine();
+        $this->line('');
         $this->warn('Your config file was updated, but feel free to add these configs to your other environments:');
         $this->comment(str_repeat('*', 54));
         $this->line(sprintf('QMONITOR_APP_ID=%s', Config::get('qmonitor.app_id')));
         $this->line(sprintf('QMONITOR_SECRET=%s', Config::get('qmonitor.signing_secret')));
         $this->comment(str_repeat('*', 54));
-        $this->newLine();
+        $this->line('');
     }
 
     protected function checkExistingSetup()
@@ -88,10 +88,10 @@ class QmonitorSetupCommand extends Command
             return true;
         }
 
-        $this->newLine();
+        $this->line('');
         $this->error('Your app is aleady configured.');
         $this->warn('If you want to reconfigure your app, remove the QMONITOR_APP_ID and QMONITOR_SECRET keys from your .env file and run this command again.');
-        $this->newLine();
+        $this->line('');
 
         return false;
     }
@@ -118,7 +118,7 @@ class QmonitorSetupCommand extends Command
         }
 
         return $this->task('Publishing config file', function () {
-            $this->newLine();
+            $this->line('');
 
             return $this->call('vendor:publish', [
                 '--provider' => QmonitorServiceProvider::class,
@@ -185,12 +185,12 @@ class QmonitorSetupCommand extends Command
 
                 return true;
             } catch (RequestException $e) {
-                $this->newLine();
+                $this->line('');
                 $this->error($e->response['message']);
 
                 return false;
             } catch (Exception $e) {
-                $this->newLine();
+                $this->line('');
                 $this->error($e->getMessage());
 
                 return false;
@@ -206,12 +206,12 @@ class QmonitorSetupCommand extends Command
 
                 return true;
             } catch (RequestException $e) {
-                $this->newLine();
+                $this->line('');
                 $this->error($e->response['message']);
 
                 return false;
             } catch (Exception $e) {
-                $this->newLine();
+                $this->line('');
                 $this->error($e->getMessage());
 
                 return false;

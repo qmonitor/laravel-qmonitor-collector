@@ -28,6 +28,6 @@ class QmonitorHeartbeatCommand extends Command
         QmonitorHeartbeatJob::dispatch();
 
         $this->info('Heartbeat job dispatched!');
-        $this->newLine();
+        $this->line('');
     }
 }

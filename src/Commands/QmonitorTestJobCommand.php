@@ -16,6 +16,6 @@ class QmonitorTestJobCommand extends Command
         QmonitorTestJob::dispatch();
 
         $this->info('Test job dispatched!');
-        $this->newLine();
+        $this->line('');
     }
 }
