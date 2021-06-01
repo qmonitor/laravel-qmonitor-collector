@@ -13,6 +13,7 @@ use Illuminate\Queue\Jobs\SyncJob;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Jobs\QmonitorPingJob;
 use Qmonitor\Support\QmonitorJobPayload;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
@@ -237,5 +238,30 @@ class QmonitorEventsSubscriberTest extends TestCase
         );
 
         Queue::assertPushed(QmonitorPingJob::class);
+    }
+
+    /** @test */
+    public function it_ignores_qmonitor_heartbeat_jobs()
+    {
+        Queue::fake();
+        Queue::assertNothingPushed();
+
+        $job = new QmonitorHeartbeatJob();
+
+        $payload = $this->jobEventPayloadMock($job, 'sync');
+
+        $syncJob = new SyncJob(
+            $this->app->make(Container::class),
+            json_encode($payload),
+            'sync',
+            'default'
+        );
+
+        tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
+            $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
+        });
+
+        $this->assertEmpty(Http::recorded(null));
+        Queue::assertNothingPushed();
     }
 }
