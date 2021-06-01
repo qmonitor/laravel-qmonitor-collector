@@ -1,6 +1,6 @@
 <?php
 
-namespace Qmonitor\Tests;
+namespace Qmonitor\Tests\Support;
 
 use Exception;
 use Illuminate\Broadcasting\BroadcastEvent;
@@ -28,6 +28,7 @@ use Qmonitor\Tests\Fixtures\FakeJobWithEloquentModelAndTags;
 use Qmonitor\Tests\Fixtures\FakeMail;
 use Qmonitor\Tests\Fixtures\FakeModel;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
+use Qmonitor\Tests\TestCase;
 use StdClass;
 
 class QmonitorJobPayloadTest extends TestCase

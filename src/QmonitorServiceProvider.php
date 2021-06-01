@@ -4,9 +4,9 @@ namespace Qmonitor;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Qmonitor\Commands\QmonitorHeartbeat;
-use Qmonitor\Commands\QmonitorSetup;
-use Qmonitor\Commands\QmonitorTest;
+use Qmonitor\Commands\QmonitorHeartbeatCommand;
+use Qmonitor\Commands\QmonitorSetupCommand;
+use Qmonitor\Commands\QmonitorTestJobCommand;
 use Qmonitor\EventHandlers\QmonitorEventsSubscriber;
 
 class QmonitorServiceProvider extends ServiceProvider
@@ -45,9 +45,9 @@ class QmonitorServiceProvider extends ServiceProvider
     protected function registerCommands(): self
     {
         $this->commands([
-            QmonitorSetup::class,
-            QmonitorHeartbeat::class,
-            QmonitorTest::class,
+            QmonitorSetupCommand::class,
+            QmonitorHeartbeatCommand::class,
+            QmonitorTestJobCommand::class,
         ]);
 
         return $this;

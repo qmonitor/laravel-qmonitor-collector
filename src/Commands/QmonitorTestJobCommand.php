@@ -5,7 +5,7 @@ namespace Qmonitor\Commands;
 use Illuminate\Console\Command;
 use Qmonitor\Jobs\QmonitorTestJob;
 
-class QmonitorTest extends Command
+class QmonitorTestJobCommand extends Command
 {
     public $signature = 'qmonitor:test';
 

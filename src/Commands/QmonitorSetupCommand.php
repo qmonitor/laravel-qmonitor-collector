@@ -12,12 +12,14 @@ use Qmonitor\Qmonitor;
 use Qmonitor\QmonitorServiceProvider;
 use sixlive\DotenvEditor\DotenvEditor;
 
-class QmonitorSetup extends Command
+class QmonitorSetupCommand extends Command
 {
     /**
      * @var string
      */
-    public $signature = 'qmonitor:setup {setup_key : The app setup key of the qmonitor.io application you are setting up}';
+    public $signature = 'qmonitor:setup
+        {setup_key : The app setup key of the qmonitor.io application you are setting up}
+        {--secret= : The signing secret to use}';
 
     /**
      * @var string
@@ -67,7 +69,7 @@ class QmonitorSetup extends Command
         $this->info('Hooray! Queue monitoring is up and running!');
 
         $this->newLine();
-        $this->warn('Add these configs to all your environments:');
+        $this->warn('Your config file was updated, but feel free to add these configs to your other environments:');
         $this->comment(str_repeat('*', 54));
         $this->line(sprintf('QMONITOR_APP_ID=%s', Config::get('qmonitor.app_id')));
         $this->line(sprintf('QMONITOR_SECRET=%s', Config::get('qmonitor.signing_secret')));
@@ -96,6 +98,12 @@ class QmonitorSetup extends Command
 
     protected function generateSigningSecret()
     {
+        if ($secret = $this->option('secret')) {
+            $this->signingSecret = $secret;
+
+            return true;
+        }
+
         return $this->task('Generating signing secret', function () {
             $this->signingSecret = sprintf('qmsec_%s', Str::random(32));
 

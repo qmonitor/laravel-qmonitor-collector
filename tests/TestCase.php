@@ -5,6 +5,7 @@ namespace Qmonitor\Tests;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
+use NunoMaduro\LaravelConsoleTask\LaravelConsoleTaskServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Qmonitor\QmonitorServiceProvider;
 
@@ -19,6 +20,7 @@ class TestCase extends Orchestra
     {
         return [
             QmonitorServiceProvider::class,
+            LaravelConsoleTaskServiceProvider::class,
         ];
     }
 

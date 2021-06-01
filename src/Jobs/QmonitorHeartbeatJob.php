@@ -2,6 +2,7 @@
 
 namespace Qmonitor\Jobs;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,6 +49,14 @@ class QmonitorHeartbeatJob implements ShouldQueue
     public function handle()
     {
         try {
+            if (! config('qmonitor.enabled')) {
+                throw new Exception('Qmonitor flag is set to OFF');
+            }
+
+            if (! config('qmonitor.app_id') || ! config('qmonitor.signing_secret')) {
+                throw new Exception('Qmonitor app id or signing secret are not set. Make sure you ran the setup command.');
+            }
+
             Qmonitor::sendHeartbeat();
         } catch (RequestException $e) {
             Log::error('Could not reach '.parse_url(Qmonitor::heartbeatUrl(), PHP_URL_HOST), [

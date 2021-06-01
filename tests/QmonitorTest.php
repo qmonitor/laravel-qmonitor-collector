@@ -105,4 +105,18 @@ class QmonitorTest extends TestCase
             return $request['signing_secret'] == $secret;
         });
     }
+
+    /** @test */
+    public function it_sends_the_heartbeat_payload()
+    {
+        // When
+        Qmonitor::sendHeartbeat();
+
+        // Then
+        Http::assertSent(function (Request $request) {
+            return $request->hasHeader('Signature')
+                && $request['hostname'] === gethostname()
+                && $request['environment'] === 'testing';
+        });
+    }
 }
