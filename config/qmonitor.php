@@ -7,26 +7,6 @@ return [
     'enabled' => env('QMONITOR_ENABLED', true),
 
     /**
-     * The queue connection to use for dispatching events to Qmonitor
-     */
-    'queue_connection' => $connection = env('QMONITOR_QUEUE_CONNECTION', config('queue.default')),
-
-    /**
-     * The queue to use for dispatching events to Qmonitor
-     */
-    'queue_name' => env('QMONITOR_QUEUE_NAME', config(sprintf('queue.connections.%s.queue', $connection))),
-
-    /**
-     * Payload signing secret
-     */
-    'signing_secret' => env('QMONITOR_SECRET'),
-
-    /**
-     * Qmonitor app id
-     */
-    'app_id' => env('QMONITOR_APP_ID'),
-
-    /**
      * Qmonitor event collector endpoint
      */
     'endpoint' => env('QMONITOR_ENDPOINT', 'https://collector.qmonitor.io'),
@@ -37,7 +17,7 @@ return [
     'tags' => env('QMONITOR_TAGS', true),
 
     /**
-     * Determine what queued jobs are monitored
+     * Determine what types of queued jobs are monitored
      */
     'monitor_types' => [
         'job' => true, // regular queued jobs
@@ -48,9 +28,29 @@ return [
     ],
 
     /**
-     * A list of jobs you don't want to monitor
+     * A list of specific queue jobs you don't want to monitor
      */
     'dont_monitor' => [
         // eg. \App\Jobs\UntrackedJob::class,
     ],
+
+    /**
+     * Qmonitor app id
+     */
+    'app_id' => env('QMONITOR_APP_ID'),
+
+    /**
+     * Payload signing secret
+     */
+    'signing_secret' => env('QMONITOR_SECRET'),
+
+    /**
+     * The queue connection to use for dispatching events to Qmonitor
+     */
+    'queue_connection' => $connection = env('QMONITOR_QUEUE_CONNECTION', config('queue.default')),
+
+    /**
+     * The queue to use for dispatching events to Qmonitor
+     */
+    'queue_name' => env('QMONITOR_QUEUE_NAME', config(sprintf('queue.connections.%s.queue', $connection))),
 ];
