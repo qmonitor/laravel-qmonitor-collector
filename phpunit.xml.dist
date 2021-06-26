@@ -17,9 +17,10 @@
     failOnEmptyTestSuite="true"
     beStrictAboutOutputDuringTests="true"
     verbose="true"
+    testdox="true"
 >
     <testsuites>
-        <testsuite name=" Test Suite">
+        <testsuite name="Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
