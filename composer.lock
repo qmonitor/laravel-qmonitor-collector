@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28e61947cd3f3c7ddbd258e107c9e254",
+    "content-hash": "be80febb4273e90b4a8a1a6b974ab7ab",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -1159,25 +1159,25 @@
         },
         {
             "name": "nunomaduro/laravel-console-task",
-            "version": "v1.6.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/laravel-console-task.git",
-                "reference": "c49ffbb33d9a750e60a1f8649f2f6dcc4114990a"
+                "reference": "513746f6809485121898e21c8a5da1ad72dca8aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/laravel-console-task/zipball/c49ffbb33d9a750e60a1f8649f2f6dcc4114990a",
-                "reference": "c49ffbb33d9a750e60a1f8649f2f6dcc4114990a",
+                "url": "https://api.github.com/repos/nunomaduro/laravel-console-task/zipball/513746f6809485121898e21c8a5da1ad72dca8aa",
+                "reference": "513746f6809485121898e21c8a5da1ad72dca8aa",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^6.0|^7.0|^8.0",
-                "illuminate/support": "^6.0|^7.0|^8.0",
-                "php": "^7.2.5|^8.0"
+                "illuminate/console": "~5.5.26|5.6.*|5.7.*|5.8.*|^6.0|^7.0",
+                "illuminate/support": "~5.5.26|5.6.*|5.7.*|5.8.*|^6.0|^7.0",
+                "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5.8|^9.0"
+                "phpunit/phpunit": "^8.2"
             },
             "type": "library",
             "extra": {
@@ -1217,7 +1217,7 @@
                 "issues": "https://github.com/nunomaduro/laravel-console-task/issues",
                 "source": "https://github.com/nunomaduro/laravel-console-task"
             },
-            "time": "2020-10-30T14:47:00+00:00"
+            "time": "2020-01-02T23:29:26+00:00"
         },
         {
             "name": "opis/closure",
