@@ -3,11 +3,8 @@
 namespace Qmonitor\Tests;
 
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Http\Client\Request;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Qmonitor\Qmonitor;
 use Qmonitor\Support\QmonitorJobPayload;
@@ -18,12 +15,6 @@ class QmonitorTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        $endpoint = Config::get('qmonitor.endpoint');
-
-        Http::fake([
-            "{$endpoint}/*" => Http::response(['message' => 'Ole!'], 200),
-        ]);
     }
 
     /** @test */
@@ -78,15 +69,14 @@ class QmonitorTest extends TestCase
         $this->event = new JobProcessing($this->connection, $this->syncJob);
         $jobPayload = QmonitorJobPayload::make($this->event);
 
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->with(Qmonitor::pingUrl(), $jobPayload->toArray())
+            ->andReturn($this->buildFakeResponse($jobPayload->toArray()));
+
         // When
         Qmonitor::sendPing($jobPayload->toArray());
-
-        // Then
-        Http::assertSent(function (Request $request) {
-            return $request['displayName'] == FakePassingTestJob::class &&
-                    $request['event'] == 'processing' &&
-                    $request['type'] == 'job';
-        });
     }
 
     /** @test */
@@ -97,26 +87,26 @@ class QmonitorTest extends TestCase
             'signing_secret' => $secret = Str::random(),
         ];
 
-        // When
-        Qmonitor::sendSetup(Str::random(), $setupPayload);
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->with(Qmonitor::setupUrl($apiKey = Str::random()), $setupPayload)
+            ->andReturn($this->buildFakeResponse($setupPayload));
 
-        // Then
-        Http::assertSent(function (Request $request) use ($secret) {
-            return $request['signing_secret'] == $secret;
-        });
+        // When
+        Qmonitor::sendSetup($apiKey, $setupPayload);
     }
 
     /** @test */
     public function it_sends_the_heartbeat_payload()
     {
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->with(Qmonitor::heartbeatUrl(), ['hostname' => gethostname(), 'environment' => 'testing'])
+            ->andReturn($this->buildFakeResponse());
+
         // When
         Qmonitor::sendHeartbeat();
-
-        // Then
-        Http::assertSent(function (Request $request) {
-            return $request->hasHeader('Signature')
-                && $request['hostname'] === gethostname()
-                && $request['environment'] === 'testing';
-        });
     }
 }

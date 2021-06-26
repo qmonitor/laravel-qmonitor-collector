@@ -172,7 +172,7 @@ class QmonitorJobPayloadTest extends TestCase
         $jobPayload->setPayload($this->jobEventPayloadMock(new SendQueuedMailable(new FakeMail)));
         $this->assertEquals('mail', $jobPayload->type);
 
-        $jobPayload->setPayload($this->jobEventPayloadMock(new SendQueuedNotifications([], new StdClass, ['mail'])));
+        $jobPayload->setPayload($this->jobEventPayloadMock(new SendQueuedNotifications(collect(), new StdClass, ['mail'])));
         $this->assertEquals('notification', $jobPayload->type);
     }
 

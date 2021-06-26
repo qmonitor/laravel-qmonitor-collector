@@ -2,18 +2,30 @@
 
 namespace Qmonitor\Tests;
 
-use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-use Illuminate\Encryption\Encrypter;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Illuminate\Support\Str;
 use NunoMaduro\LaravelConsoleTask\LaravelConsoleTaskServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Qmonitor\QmonitorServiceProvider;
+use Zttp\Zttp;
+use Zttp\ZttpResponse;
 
 class TestCase extends Orchestra
 {
     public function setUp(): void
     {
         parent::setUp();
+
+        $this->httpMock = $this->mock(Zttp::class, function ($mock) {
+            $mock->allows([
+                'asJson' => $mock,
+                'accept' => $mock,
+                'timeout' => $mock,
+                'withHeaders' => $mock,
+                'isClientError' => false,
+                'isServerError' => false,
+            ]);
+        });
     }
 
     protected function getPackageProviders($app)
@@ -50,9 +62,7 @@ class TestCase extends Orchestra
             'retryUntil' => optional($job)->retryUntil,
         ];
 
-        $command = $job instanceof ShouldBeEncrypted && $this->app->bound(Encrypter::class)
-                    ? $this->app->make(Encrypter::class)->encrypt(serialize(clone $job))
-                    : serialize(clone $job);
+        $command = serialize(clone $job);
 
         return array_merge($payload, [
             'data' => [
@@ -60,5 +70,16 @@ class TestCase extends Orchestra
                 'command' => $command,
             ],
         ]);
+    }
+
+    public function buildFakeResponse(array $payload = [], int $status = 200, array $headers = [])
+    {
+        return new ZttpResponse(
+            new GuzzleResponse(
+                $status,
+                $headers,
+                json_encode($payload)
+            )
+        );
     }
 }

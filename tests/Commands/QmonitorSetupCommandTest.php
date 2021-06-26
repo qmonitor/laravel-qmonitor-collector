@@ -4,9 +4,9 @@ namespace Qmonitor\Tests\Commands;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Qmonitor\Qmonitor;
 use Qmonitor\Tests\TestCase;
 use sixlive\DotenvEditor\DotenvEditor;
 
@@ -19,17 +19,17 @@ class QmonitorSetupCommandTest extends TestCase
         $this->appUuid = Str::uuid();
         $this->secret = sprintf('qmsec_%s', Str::random(32));
 
-        Config::set([
-            'qmonitor.endpoint' => 'https://fail.qmonitor.io',
-        ]);
+        // Config::set([
+        //     'qmonitor.endpoint' => 'https://fail.qmonitor.io',
+        // ]);
 
-        Http::fake([
-            'https://fail.qmonitor.io/apps/setup-key/setup' => Http::response([
-                'app_uuid' => $this->appUuid,
-            ], 200),
-            'https://fail.qmonitor.io/apps/{$this->appUuid}/hearbeat' => Http::response([], 201),
-            "*" => Http::response(['message' => 'Ole!'], 200),
-        ]);
+        // Http::fake([
+        //     'https://fail.qmonitor.io/apps/setup-key/setup' => Http::response([
+        //         'app_uuid' => $this->appUuid,
+        //     ], 200),
+        //     'https://fail.qmonitor.io/apps/{$this->appUuid}/hearbeat' => Http::response([], 201),
+        //     "*" => Http::response(['message' => 'Ole!'], 200),
+        // ]);
 
         Queue::fake();
 
@@ -56,8 +56,6 @@ class QmonitorSetupCommandTest extends TestCase
             ->expectsOutput('If you want to reconfigure your app, remove the QMONITOR_APP_ID and QMONITOR_SECRET keys from your .env file and run this command again.')
             ->assertExitCode(1);
 
-        $this->assertEmpty(Http::recorded(null));
-
         // reset env state
         // unlink(base_path('.env'));
         // touch(base_path('.env'));
@@ -74,6 +72,13 @@ class QmonitorSetupCommandTest extends TestCase
             'qmonitor.app_id' => null,
             'qmonitor.signing_secret' => null,
         ]);
+
+        $this->httpMock
+            ->shouldReceive('post')
+            ->with(Qmonitor::setupUrl('setup-key'), ['signing_secret' => $this->secret])
+            ->andReturn($this->buildFakeResponse([
+                'app_uuid' => $this->appUuid,
+            ]));
 
         $this->assertFalse(file_exists(config_path('qmonitor.php')));
 
@@ -93,22 +98,6 @@ class QmonitorSetupCommandTest extends TestCase
 
         $this->assertEquals($this->appUuid, Config::get('qmonitor.app_id'));
         $this->assertEquals($this->secret, Config::get('qmonitor.signing_secret'));
-
-        Http::assertSent(function (Request $request) {
-            if ($request->url() === 'https://fail.qmonitor.io/apps/setup-key/setup') {
-                return $request->hasHeader('Signature') && ! empty($request['signing_secret']);
-            }
-
-            return false;
-        });
-
-        Http::assertSent(function (Request $request) {
-            if ($request->url() === "https://fail.qmonitor.io/apps/{$this->appUuid}/heartbeat") {
-                return $request['hostname'] == gethostname() && $request['environment'] == 'testing';
-            }
-
-            return false;
-        });
     }
 
     protected function loadEnv($file)

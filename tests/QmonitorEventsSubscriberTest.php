@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Jobs\QmonitorPingJob;
+use Qmonitor\Qmonitor;
 use Qmonitor\Support\QmonitorJobPayload;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
@@ -25,12 +26,10 @@ class QmonitorEventsSubscriberTest extends TestCase
     {
         parent::setUp();
 
-        // $endpoint = Config::get('qmonitor.endpoint');
-
-        Http::fake([
-            'https://fail.qmonitor.io/*' => Http::response(['message' => 'Fail!'], 400),
-            "*" => Http::response(['message' => 'Ole!'], 200),
-        ]);
+        // Http::fake([
+        //     'https://fail.qmonitor.io/*' => Http::response(['message' => 'Fail!'], 400),
+        //     "*" => Http::response(['message' => 'Ole!'], 200),
+        // ]);
 
         $this->job = new FakePassingTestJob;
 
@@ -50,15 +49,21 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::fake();
         Queue::assertNothingPushed();
 
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->withArgs(function ($url, $payload) {
+                return $url === Qmonitor::pingUrl() &&
+                    $payload['displayName'] === FakePassingTestJob::class &&
+                    $payload['event'] === 'processing' &&
+                    $payload['type'] === 'job';
+            })
+            ->andReturn($this->buildFakeResponse());
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        Http::assertSent(function (Request $request) {
-            return $request['displayName'] == FakePassingTestJob::class &&
-                    $request['event'] == 'processing' &&
-                    $request['type'] == 'job';
-        });
         Queue::assertNothingPushed();
     }
 
@@ -68,15 +73,21 @@ class QmonitorEventsSubscriberTest extends TestCase
         Queue::fake();
         Queue::assertNothingPushed();
 
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->withArgs(function ($url, $payload) {
+                return $url === Qmonitor::pingUrl() &&
+                    $payload['displayName'] === FakePassingTestJob::class &&
+                    $payload['event'] === 'processed' &&
+                    $payload['type'] === 'job';
+            })
+            ->andReturn($this->buildFakeResponse());
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessed('sync', $this->syncJob));
         });
 
-        Http::assertSent(function (Request $request) {
-            return $request['displayName'] == FakePassingTestJob::class &&
-                    $request['event'] == 'processed' &&
-                    $request['type'] == 'job';
-        });
         Queue::assertNothingPushed();
     }
 
@@ -88,16 +99,21 @@ class QmonitorEventsSubscriberTest extends TestCase
 
         $exception = new Exception($message = 'This job has failed');
 
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->withArgs(function ($url, $payload) {
+                return $url === Qmonitor::pingUrl() &&
+                    $payload['displayName'] === FakePassingTestJob::class &&
+                    $payload['event'] === 'failed' &&
+                    $payload['type'] === 'job';
+            })
+            ->andReturn($this->buildFakeResponse());
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($exception) {
             $dispatcher->dispatch(new JobFailed('sync', $this->syncJob, $exception));
         });
 
-        Http::assertSent(function (Request $request) use ($message) {
-            return $request['displayName'] == FakePassingTestJob::class &&
-                    $request['event'] == 'failed' &&
-                    $request['type'] == 'job' &&
-                    $request['exception']['message'] == $message;
-        });
         Queue::assertNothingPushed();
     }
 
@@ -111,11 +127,12 @@ class QmonitorEventsSubscriberTest extends TestCase
             'qmonitor.enabled' => false,
         ]);
 
+        $this->httpMock->shouldNotReceive('post');
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        $this->assertEmpty(Http::recorded(null));
         Queue::assertNothingPushed();
     }
 
@@ -129,11 +146,12 @@ class QmonitorEventsSubscriberTest extends TestCase
             'qmonitor.app_id' => null,
         ]);
 
+        $this->httpMock->shouldNotReceive('post');
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        $this->assertEmpty(Http::recorded(null));
         Queue::assertNothingPushed();
     }
 
@@ -149,11 +167,12 @@ class QmonitorEventsSubscriberTest extends TestCase
 
         $this->assertFalse(Config::get('qmonitor.monitor_types.job'));
 
+        $this->httpMock->shouldNotReceive('post');
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
-        $this->assertEmpty(Http::recorded(null));
         Queue::assertNothingPushed();
     }
 
@@ -176,66 +195,29 @@ class QmonitorEventsSubscriberTest extends TestCase
             'default'
         );
 
+        $this->httpMock->shouldNotReceive('post');
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
             $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
         });
 
-        $this->assertEmpty(Http::recorded(null));
-        Queue::assertNothingPushed();
-    }
-
-    /** @test */
-    public function it_handles_encrypted_jobs()
-    {
-        if (! interface_exists(\Illuminate\Contracts\Queue\ShouldBeEncrypted::class)) {
-            return $this->assertTrue(true);
-        }
-
-        Queue::fake();
-        Queue::assertNothingPushed();
-
-        $job = new FakeEncryptedJob;
-
-        $payload = $this->jobEventPayloadMock($job, 'sync');
-
-        $syncJob = new SyncJob(
-            $this->app->make(Container::class),
-            json_encode($payload),
-            'sync',
-            'default'
-        );
-
-        tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
-            $dispatcher->dispatch(new JobProcessed('sync', $syncJob));
-        });
-
-        Http::assertSent(function (Request $request) {
-            return $request['displayName'] == FakeEncryptedJob::class;
-        });
         Queue::assertNothingPushed();
     }
 
     /** @test */
     public function it_dispatches_a_job_if_an_error_is_thrown()
     {
-        Config::set([
-            'qmonitor.endpoint' => 'https://fail.qmonitor.io',
-        ]);
-
-        $this->assertSame(Config::get('qmonitor.endpoint'), 'https://fail.qmonitor.io');
-
         Queue::fake();
         Queue::assertNothingPushed();
+
+        $this->httpMock
+            ->shouldReceive('post')
+            ->once()
+            ->andReturn($this->buildFakeResponse(['message' => 'Fail!'], 400));
 
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
-
-        $this->assertEmpty(
-            Http::recorded(function ($request) {
-                return $request->url() == Config::get('qmonitor.endpoint');
-            })
-        );
 
         Queue::assertPushed(QmonitorPingJob::class);
     }
@@ -257,11 +239,12 @@ class QmonitorEventsSubscriberTest extends TestCase
             'default'
         );
 
+        $this->httpMock->shouldNotReceive('post');
+
         tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
             $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
         });
 
-        $this->assertEmpty(Http::recorded(null));
         Queue::assertNothingPushed();
     }
 }

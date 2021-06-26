@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Qmonitor\Client\ClientInterface;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Tests\TestCase;
 use sixlive\DotenvEditor\DotenvEditor;
@@ -16,10 +17,6 @@ class QmonitorHeartbeatCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        Http::fake([
-            "*" => Http::response(['message' => 'Ole!'], 200),
-        ]);
 
         Queue::fake();
     }

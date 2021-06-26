@@ -2,7 +2,6 @@
 
 namespace Qmonitor\Tests\Commands;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Qmonitor\Jobs\QmonitorTestJob;
 use Qmonitor\Tests\TestCase;
@@ -12,10 +11,6 @@ class QmonitorTestJobCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        Http::fake([
-            "*" => Http::response(['message' => 'Ole!'], 200),
-        ]);
 
         Queue::fake();
     }
