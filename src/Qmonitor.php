@@ -4,6 +4,7 @@ namespace Qmonitor;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Qmonitor\Client\ClientInterface;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Jobs\QmonitorPingJob;
 
@@ -58,15 +59,11 @@ class Qmonitor
      */
     public static function sendPing(array $payload)
     {
-        return Http::timeout(5)
-            ->retry(2, 500)
-            ->withHeaders([
-                'Signature' => static::calculateSignature($payload, config('qmonitor.signing_secret')),
-            ])
-            ->asJson()
-            ->acceptJson()
-            ->post(static::pingUrl(), $payload)
-            ->throw();
+        return app(ClientInterface::class)
+            ->timeout(5)
+            ->withSignature(static::calculateSignature($payload, config('qmonitor.signing_secret')))
+            ->withPayload($payload)
+            ->sendTo(static::pingUrl());
     }
 
     /**
@@ -74,19 +71,15 @@ class Qmonitor
      *
      * @throws \Illuminate\Http\Client\RequestException
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      */
-    public static function sendHeartbeat()
+    public static function sendHeartbeat(): array
     {
-        return Http::timeout(5)
-            ->retry(2, 500)
-            ->withHeaders([
-                'Signature' => static::calculateSignature(static::heartbeatPayload(), config('qmonitor.signing_secret')),
-            ])
-            ->asJson()
-            ->acceptJson()
-            ->post(static::heartbeatUrl(), static::heartbeatPayload())
-            ->throw();
+        return app(ClientInterface::class)
+            ->timeout(5)
+            ->withSignature(static::calculateSignature(static::heartbeatPayload(), config('qmonitor.signing_secret')))
+            ->withPayload(static::heartbeatPayload())
+            ->sendTo(static::heartbeatUrl());
     }
 
     /**
@@ -99,18 +92,13 @@ class Qmonitor
      *
      * @return array
      */
-    public static function sendSetup(string $setupKey, array $payload)
+    public static function sendSetup(string $setupKey, array $payload): array
     {
-        $response = Http::timeout(5)
-            ->withHeaders([
-                'Signature' => static::calculateSignature($payload, $setupKey),
-            ])
-            ->asJson()
-            ->acceptJson()
-            ->post(static::setupUrl($setupKey), $payload)
-            ->throw();
-
-        return $response;
+        return app(ClientInterface::class)
+            ->timeout(5)
+            ->withSignature(static::calculateSignature($payload, $setupKey))
+            ->withPayload($payload)
+            ->sendTo(static::setupUrl($setupKey));
     }
 
     /**
