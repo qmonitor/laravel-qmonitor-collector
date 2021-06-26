@@ -12,21 +12,21 @@ class HttpClient implements ClientInterface
 
     protected $payload;
 
-    public function withSignature(string $signature): self
+    public function withSignature(string $signature): ClientInterface
     {
         $this->signature = $signature;
 
         return $this;
     }
 
-    public function withPayload(array $payload): self
+    public function withPayload(array $payload): ClientInterface
     {
         $this->payload = $payload;
 
         return $this;
     }
 
-    public function timeout(int $seconds): self
+    public function timeout(int $seconds): ClientInterface
     {
         $this->timeout = $seconds;
 
