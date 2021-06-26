@@ -22,7 +22,7 @@ class QmonitorTest extends TestCase
         $endpoint = Config::get('qmonitor.endpoint');
 
         Http::fake([
-            "{$endpoint}/*" => Http::response('Ole!', 200),
+            "{$endpoint}/*" => Http::response(['message' => 'Ole!'], 200),
         ]);
     }
 
