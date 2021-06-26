@@ -4,6 +4,8 @@ namespace Qmonitor;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Qmonitor\Client\ClientInterface;
+use Qmonitor\Client\HttpClient;
 use Qmonitor\Commands\QmonitorHeartbeatCommand;
 use Qmonitor\Commands\QmonitorSetupCommand;
 use Qmonitor\Commands\QmonitorTestJobCommand;
@@ -29,6 +31,10 @@ class QmonitorServiceProvider extends ServiceProvider
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/qmonitor.php', 'qmonitor');
+
+        $this->app->singleton(ClientInterface::class, function ($app) {
+            return $app->make(HttpClient::class);
+        });
     }
 
     protected function registerPublishables(): self
