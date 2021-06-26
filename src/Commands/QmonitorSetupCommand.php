@@ -179,8 +179,6 @@ class QmonitorSetupCommand extends Command
                     'signing_secret' => $this->signingSecret,
                 ]);
 
-                ray($payload);
-
                 $this->appId = $payload['app_uuid'];
 
                 return true;
@@ -223,6 +221,6 @@ class QmonitorSetupCommand extends Command
     {
         $this->error($message);
 
-        return static::FAILURE;
+        return 1;
     }
 }

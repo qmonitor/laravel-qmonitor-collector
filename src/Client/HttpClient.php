@@ -2,7 +2,8 @@
 
 namespace Qmonitor\Client;
 
-use Illuminate\Support\Facades\Http;
+use Zttp\ConnectionException;
+use Zttp\Zttp;
 
 class HttpClient implements ClientInterface
 {
@@ -37,7 +38,9 @@ class HttpClient implements ClientInterface
     {
         $response = $this->buildHttpClient()->post($url, $this->payload ?? []);
 
-        $response->throw();
+        if ($response->isClientError() || $response->isServerError()) {
+            throw new ConnectionException('Connection error');
+        }
 
         return $response->json();
     }
@@ -49,7 +52,7 @@ class HttpClient implements ClientInterface
      */
     public function buildHttpClient()
     {
-        $client = Http::asJson()->acceptJson();
+        $client = app(Zttp::class)->asJson()->accept('application/json');
 
         if ($this->timeout) {
             $client->timeout($this->timeout);

@@ -99,7 +99,7 @@ class QmonitorJobPayload
     {
         return $this->set([
             'exactTimestamp' => (int) now()->getPreciseTimestamp(3),
-            'uuid' => $this->job->uuid(),
+            'uuid' => method_exists($this->job, 'uuid') ? $this->job->uuid() : $this->job->getJobId(),
             'displayName' => $this->job->resolveName(),
             'type' => $this->determineType(),
             'tags' => $this->determineTags(),
