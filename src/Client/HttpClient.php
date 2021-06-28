@@ -7,12 +7,28 @@ use Zttp\Zttp;
 
 class HttpClient implements ClientInterface
 {
+    /**
+     * @var int
+     */
     protected $timeout;
 
+    /**
+     * @var string
+     */
     protected $signature;
 
+    /**
+     * @var array
+     */
     protected $payload;
 
+    /**
+     * Set the signature param
+     *
+     * @param  string $signature
+     *
+     * @return self
+     */
     public function withSignature(string $signature): ClientInterface
     {
         $this->signature = $signature;
@@ -20,6 +36,13 @@ class HttpClient implements ClientInterface
         return $this;
     }
 
+    /**
+     * Set the payload param
+     *
+     * @param  array  $payload
+     *
+     * @return self
+     */
     public function withPayload(array $payload): ClientInterface
     {
         $this->payload = $payload;
@@ -27,6 +50,13 @@ class HttpClient implements ClientInterface
         return $this;
     }
 
+    /**
+     * Set the timeout param
+     *
+     * @param  int    $seconds
+     *
+     * @return self
+     */
     public function timeout(int $seconds): ClientInterface
     {
         $this->timeout = $seconds;
@@ -34,6 +64,13 @@ class HttpClient implements ClientInterface
         return $this;
     }
 
+    /**
+     * Send request to specified url
+     *
+     * @param  string $url
+     *
+     * @return array
+     */
     public function sendTo(string $url): array
     {
         $response = $this->buildHttpClient()->post($url, $this->payload ?? []);
@@ -42,7 +79,7 @@ class HttpClient implements ClientInterface
             throw new ConnectionException('Connection error');
         }
 
-        return $response->json();
+        return $response->json() ?? [];
     }
 
     /**
@@ -52,7 +89,7 @@ class HttpClient implements ClientInterface
      */
     public function buildHttpClient()
     {
-        $client = app(Zttp::class)->asJson()->accept('application/json');
+        $client = app(Zttp::class)::asJson()->accept('application/json');
 
         if ($this->timeout) {
             $client->timeout($this->timeout);
