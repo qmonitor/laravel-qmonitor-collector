@@ -3,7 +3,9 @@
 namespace Qmonitor;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Qmonitor\Client\ClientInterface;
 use Qmonitor\Client\HttpClient;
 use Qmonitor\Commands\QmonitorHeartbeatCommand;
@@ -19,6 +21,7 @@ class QmonitorServiceProvider extends ServiceProvider
     public function boot()
     {
         $this
+            ->registerCustomQueuePayload()
             ->registerPublishables()
             ->registerCommands()
             ->registerEventHandler();
@@ -62,6 +65,17 @@ class QmonitorServiceProvider extends ServiceProvider
     protected function registerEventHandler(): self
     {
         Event::subscribe(QmonitorEventsSubscriber::class);
+
+        return $this;
+    }
+
+    protected function registerCustomQueuePayload()
+    {
+        Queue::createPayloadUsing(function ($connection, $queue, $payload) {
+            return array_merge($payload, [
+                'qmonitor_uuid' => Str::uuid(),
+            ]);
+        });
 
         return $this;
     }
