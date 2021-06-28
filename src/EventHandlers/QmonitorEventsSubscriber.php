@@ -65,6 +65,8 @@ class QmonitorEventsSubscriber
             // send payload
             Qmonitor::sendPing($payload->toArray());
         } catch (Throwable $e) {
+            report($e);
+
             // if anything goes wrong
             // dispatch a job with the payload so we can handle retries
             if (! isset($payload)) {
