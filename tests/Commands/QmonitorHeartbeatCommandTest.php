@@ -35,7 +35,7 @@ class QmonitorHeartbeatCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_return_an_error_when_the_qmonitor_is_not_enabled()
+    public function it_returns_an_error_when_the_qmonitor_is_not_enabled()
     {
         Config::set('qmonitor.enabled', false);
 
@@ -47,7 +47,7 @@ class QmonitorHeartbeatCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_return_an_error_when_the_qmonitor_app_id_is_not_set()
+    public function it_returns_an_error_when_the_qmonitor_app_id_is_not_set()
     {
         Config::set('qmonitor.app_id', null);
 
@@ -59,7 +59,7 @@ class QmonitorHeartbeatCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_return_an_error_when_the_qmonitor_signing_secret_is_not_set()
+    public function it_returns_an_error_when_the_qmonitor_signing_secret_is_not_set()
     {
         Config::set('qmonitor.signing_secret', null);
 

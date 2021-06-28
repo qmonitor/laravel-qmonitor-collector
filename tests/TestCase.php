@@ -41,6 +41,7 @@ class TestCase extends Orchestra
     {
         $payload = [
             'uuid' => (string) Str::uuid(),
+            'qmonitor_uuid' => (string) Str::uuid(),
             'displayName' => get_class($job),
             'job' => 'Illuminate\Queue\CallQueuedHandler@call',
             'maxTries' => optional($job)->tries,

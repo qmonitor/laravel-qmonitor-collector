@@ -55,6 +55,16 @@ class QmonitorJobPayloadTest extends TestCase
     }
 
     /** @test */
+    public function it_resolves_the_job_unique_identifier()
+    {
+        // When
+        $jobPayload = QmonitorJobPayload::make($this->event);
+
+        // Then
+        $this->assertNotNull($jobPayload->uuid);
+    }
+
+    /** @test */
     public function it_resolves_the_job_name()
     {
         // When
