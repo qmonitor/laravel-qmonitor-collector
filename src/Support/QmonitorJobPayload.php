@@ -98,7 +98,7 @@ class QmonitorJobPayload
     protected function prepare()
     {
         return $this->set([
-            'exactTimestamp' => (int) now()->getPreciseTimestamp(3),
+            'exactTimestamp' => (int) $this->resolvePreciseTimestamp(),
             'uuid' => $this->payload['qmonitor_uuid'],
             'displayName' => $this->job->resolveName(),
             'type' => $this->determineType(),
@@ -126,6 +126,22 @@ class QmonitorJobPayload
             'phpVersion' => phpversion(),
             'collectorVersion' => Qmonitor::version(),
         ]);
+    }
+
+    /**
+     * Resolve the precise timestamp, depending on the Carbon version
+     *
+     * @param  integer $precision
+     *
+     * @return integer
+     */
+    protected function resolvePreciseTimestamp($precision = 3)
+    {
+        if (method_exists(now(), 'getPreciseTimestamp')) {
+            return now()->getPreciseTimestamp($precision);
+        }
+
+        return round(now()->format('Uu') / pow(10, 6 - $precision));
     }
 
     /**
