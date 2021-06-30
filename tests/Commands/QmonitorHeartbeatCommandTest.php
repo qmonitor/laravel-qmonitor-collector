@@ -2,14 +2,11 @@
 
 namespace Qmonitor\Tests\Commands;
 
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Str;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Tests\TestCase;
-use sixlive\DotenvEditor\DotenvEditor;
 
 class QmonitorHeartbeatCommandTest extends TestCase
 {

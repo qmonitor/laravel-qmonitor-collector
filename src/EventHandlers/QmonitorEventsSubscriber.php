@@ -68,6 +68,7 @@ class QmonitorEventsSubscriber
             // if the payload failed to be created, stop trying
             if (! isset($payload)) {
                 report($e);
+
                 return;
             }
 

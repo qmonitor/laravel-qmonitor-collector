@@ -3,7 +3,6 @@
 namespace Qmonitor;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Qmonitor\Client\ClientInterface;
 use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Jobs\QmonitorPingJob;
@@ -138,7 +137,7 @@ class Qmonitor
      *
      * @param  string  $jobName
      *
-     * @return boolean
+     * @return bool
      */
     public static function isMonitoredJob(string $jobName)
     {
@@ -150,11 +149,11 @@ class Qmonitor
             ->contains($jobName);
     }
 
-     /**
-     * Compile heartbeat payload
-     *
-     * @return array
-     */
+    /**
+    * Compile heartbeat payload
+    *
+    * @return array
+    */
     protected static function heartbeatPayload()
     {
         return [
