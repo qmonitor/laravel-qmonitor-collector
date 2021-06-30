@@ -14,6 +14,8 @@ Before running this command, you need to create and account with [qmonitor.io](h
 composer require qmonitor/laravel-qmonitor-collector
 ```
 
+> The v2.0 of this package is only compatible with Laravel 7.x and 8.x, If you're using Laravel 5.7, 5.8 or 6.x, install the v1.0 of this package.
+
 ## Usage
 
 When you create a new application on qmonitor.io, you'll get a setup key with each individual app. This setup key is used to setup things in your Laravel app by running this command:
