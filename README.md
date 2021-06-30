@@ -11,8 +11,10 @@ Qmonitor enables you to monitor queue tasks from all your Laravel apps. This pac
 Before running this command, you need to create and account with [qmonitor.io](https://qmonitor.io).
 
 ```bash
-composer require qmonitor/laravel-qmonitor-collector
+composer require qmonitor/laravel-qmonitor-collector:^1.0
 ```
+
+> The v1.0 of this package is only compatible with Laravel 5.7, 5.8 and 6.x, If you're using Laravel 7.x or 8.x, install the v2.0 of this package
 
 ## Usage
 
