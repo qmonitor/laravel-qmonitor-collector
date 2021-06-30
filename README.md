@@ -107,7 +107,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule) 
     {
       	// ...
-				$schedule->command('qmonitor:heartbeat')->everyFiveMinutes();      
+        $schedule->command('qmonitor:heartbeat')->everyFiveMinutes();      
     }
 }
 ```
