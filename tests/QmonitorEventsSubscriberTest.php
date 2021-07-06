@@ -13,9 +13,7 @@ use Illuminate\Queue\Jobs\SyncJob;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Qmonitor\Jobs\QmonitorHeartbeatJob;
 use Qmonitor\Jobs\QmonitorPingJob;
-use Qmonitor\Support\QmonitorJobPayload;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
 
