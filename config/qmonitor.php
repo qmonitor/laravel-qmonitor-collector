@@ -31,6 +31,9 @@ return [
      * A list of specific queue jobs you don't want to monitor
      */
     'dont_monitor' => [
+        // \Qmonitor\Jobs\QmonitorPingJob::class,
+        // \Qmonitor\Jobs\QmonitorHeartbeatJob::class,
+        // ...
         // eg. \App\Jobs\UntrackedJob::class,
     ],
 

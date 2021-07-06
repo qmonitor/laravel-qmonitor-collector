@@ -143,10 +143,6 @@ class Qmonitor
     public static function isMonitoredJob(string $jobName)
     {
         return ! collect(config('qmonitor.dont_monitor'))
-            ->merge([
-                QmonitorPingJob::class,
-                QmonitorHeartbeatJob::class,
-            ])
             ->contains($jobName);
     }
 
