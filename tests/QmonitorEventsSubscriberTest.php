@@ -158,26 +158,19 @@ class QmonitorEventsSubscriberTest extends TestCase
     }
 
     /** @test */
-    public function it_ignores_qmonitor_ping_jobs()
+    public function it_respects_the_dont_monitor_config()
     {
         Queue::fake();
         Queue::assertNothingPushed();
 
-        $jobPayload = QmonitorJobPayload::make(new JobProcessing('sync', $this->syncJob));
+        Config::set('qmonitor.dont_monitor', [
+            FakePassingTestJob::class,
+        ]);
 
-        $job = new QmonitorPingJob($jobPayload->toArray());
+        $this->assertTrue(array_key_exists(FakePassingTestJob::class, array_flip(config('qmonitor.dont_monitor'))));
 
-        $payload = $this->jobEventPayloadMock($job, 'sync');
-
-        $syncJob = new SyncJob(
-            $this->app->make(Container::class),
-            json_encode($payload),
-            'sync',
-            'default'
-        );
-
-        tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
-            $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
+        tap($this->app->make(Dispatcher::class), function ($dispatcher) {
+            $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
         });
 
         $this->assertEmpty(Http::recorded(null));
@@ -238,30 +231,5 @@ class QmonitorEventsSubscriberTest extends TestCase
         );
 
         Queue::assertPushed(QmonitorPingJob::class);
-    }
-
-    /** @test */
-    public function it_ignores_qmonitor_heartbeat_jobs()
-    {
-        Queue::fake();
-        Queue::assertNothingPushed();
-
-        $job = new QmonitorHeartbeatJob();
-
-        $payload = $this->jobEventPayloadMock($job, 'sync');
-
-        $syncJob = new SyncJob(
-            $this->app->make(Container::class),
-            json_encode($payload),
-            'sync',
-            'default'
-        );
-
-        tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
-            $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
-        });
-
-        $this->assertEmpty(Http::recorded(null));
-        Queue::assertNothingPushed();
     }
 }
