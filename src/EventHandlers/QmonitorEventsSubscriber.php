@@ -65,9 +65,10 @@ class QmonitorEventsSubscriber
             // send payload
             Qmonitor::sendPing($payload->toArray());
         } catch (Throwable $e) {
+            report($e);
+
             // if the payload failed to be created, stop trying
             if (! isset($payload)) {
-                report($e);
                 return;
             }
 
