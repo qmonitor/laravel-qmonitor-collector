@@ -5,8 +5,6 @@ namespace Qmonitor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Qmonitor\Client\ClientInterface;
-use Qmonitor\Jobs\QmonitorHeartbeatJob;
-use Qmonitor\Jobs\QmonitorPingJob;
 
 class Qmonitor
 {
@@ -143,10 +141,6 @@ class Qmonitor
     public static function isMonitoredJob(string $jobName)
     {
         return ! collect(config('qmonitor.dont_monitor'))
-            ->merge([
-                QmonitorPingJob::class,
-                QmonitorHeartbeatJob::class,
-            ])
             ->contains($jobName);
     }
 
