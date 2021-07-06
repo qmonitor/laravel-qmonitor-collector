@@ -116,7 +116,8 @@ class QmonitorTest extends TestCase
         Http::assertSent(function (Request $request) {
             return $request->hasHeader('Signature')
                 && $request['hostname'] === gethostname()
-                && $request['environment'] === 'testing';
+                && $request['environment'] === 'testing'
+                && ! empty($request['uuid']);
         });
     }
 }
