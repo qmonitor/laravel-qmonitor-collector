@@ -43,7 +43,6 @@ return [
      */
     'enabled' => env('QMONITOR_ENABLED', true),
 
-
     /**
      * Toggle Qmonitor job tag collection
      */
@@ -64,6 +63,9 @@ return [
      * A list of jobs you don't want to monitor
      */
     'dont_monitor' => [
+        // \Qmonitor\Jobs\QmonitorPingJob::class,
+        // \Qmonitor\Jobs\QmonitorHeartbeatJob::class,
+        // ...
         // eg. \App\Jobs\UntrackedJob::class,
     ],
   
@@ -107,7 +109,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule) 
     {
       	// ...
-				$schedule->command('qmonitor:heartbeat')->everyFiveMinutes();      
+		$schedule->command('qmonitor:heartbeat')->everyFiveMinutes();      
     }
 }
 ```
