@@ -156,7 +156,7 @@ class Qmonitor
     protected static function heartbeatPayload()
     {
         return [
-            'uuid' => Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'hostname' => gethostname(),
             'environment' => app()->environment(),
         ];
