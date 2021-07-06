@@ -65,7 +65,7 @@ class QmonitorHeartbeatJob implements ShouldQueue
                 'url' => Qmonitor::heartbeatUrl(),
             ]);
 
-            $this->release(15);
+            $this->release($e->response->status() === 429 ? 300 : 15);
         } catch (Throwable $e) {
             throw $e;
         }
