@@ -5,8 +5,6 @@ namespace Qmonitor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Qmonitor\Client\ClientInterface;
-use Qmonitor\Jobs\QmonitorHeartbeatJob;
-use Qmonitor\Jobs\QmonitorPingJob;
 
 class Qmonitor
 {
