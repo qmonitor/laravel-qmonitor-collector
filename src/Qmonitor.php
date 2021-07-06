@@ -11,7 +11,7 @@ class Qmonitor
     /**
      * @var string
      */
-    const VERSION = '2.0.2';
+    const VERSION = '2.0.1';
 
     /**
      * Collector version
@@ -141,6 +141,9 @@ class Qmonitor
     public static function isMonitoredJob(string $jobName)
     {
         return ! collect(config('qmonitor.dont_monitor'))
+            ->merge([
+                \Qmonitor\Jobs\QmonitorPingJob::class,
+            ])
             ->contains($jobName);
     }
 
@@ -152,7 +155,7 @@ class Qmonitor
     protected static function heartbeatPayload()
     {
         return [
-            'uuid' => Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'hostname' => gethostname(),
             'environment' => app()->environment(),
         ];

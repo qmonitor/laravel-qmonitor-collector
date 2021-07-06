@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Qmonitor\Jobs\QmonitorPingJob;
+use Qmonitor\Support\QmonitorJobPayload;
 use Qmonitor\Tests\Fixtures\FakeEncryptedJob;
 use Qmonitor\Tests\Fixtures\FakePassingTestJob;
 
@@ -169,6 +170,33 @@ class QmonitorEventsSubscriberTest extends TestCase
 
         tap($this->app->make(Dispatcher::class), function ($dispatcher) {
             $dispatcher->dispatch(new JobProcessing('sync', $this->syncJob));
+        });
+
+        $this->assertEmpty(Http::recorded(null));
+        Queue::assertNothingPushed();
+    }
+
+    /** @test */
+    public function it_ignores_qmonitor_ping_jobs()
+    {
+        Queue::fake();
+        Queue::assertNothingPushed();
+
+        $jobPayload = QmonitorJobPayload::make(new JobProcessing('sync', $this->syncJob));
+
+        $job = new QmonitorPingJob($jobPayload->toArray());
+
+        $payload = $this->jobEventPayloadMock($job, 'sync');
+
+        $syncJob = new SyncJob(
+            $this->app->make(Container::class),
+            json_encode($payload),
+            'sync',
+            'default'
+        );
+
+        tap($this->app->make(Dispatcher::class), function ($dispatcher) use ($syncJob) {
+            $dispatcher->dispatch(new JobProcessing('sync', $syncJob));
         });
 
         $this->assertEmpty(Http::recorded(null));
