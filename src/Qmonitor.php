@@ -4,6 +4,7 @@ namespace Qmonitor;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Qmonitor\Client\ClientInterface;
 
 class Qmonitor
@@ -152,6 +153,7 @@ class Qmonitor
     protected static function heartbeatPayload()
     {
         return [
+            'uuid' => Str::uuid(),
             'hostname' => gethostname(),
             'environment' => app()->environment(),
         ];
