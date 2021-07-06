@@ -2,7 +2,7 @@
 
 return [
     /**
-     * Master toggle for Qmonitor event tracking
+     * Main toggle for Qmonitor event tracking
      */
     'enabled' => env('QMONITOR_ENABLED', true),
 
