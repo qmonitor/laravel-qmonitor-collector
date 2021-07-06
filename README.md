@@ -1,8 +1,8 @@
 # Laravel Qmonitor Collector
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/qmonitor/laravel-qmonitor-collector.svg?style=flat-square)](https://packagist.org/packages/qmonitor/laravel-qmonitor-collector)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/qmonitor/laravel-qmonitor-collector/run-tests?label=tests)](https://github.com/qmonitor/laravel-qmonitor-collector/actions?query=workflow%3ATests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/qmonitor/laravel-qmonitor-collector/Check%20&%20fix%20styling?label=code%20style)](https://github.com/qmonitor/laravel-qmonitor-collector/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/qmonitor/laravel-qmonitor-collector/run-tests?label=tests)](https://github.com/qmonitor/laravel-qmonitor-collector/actions?query=workflow%3ATests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/qmonitor/laravel-qmonitor-collector/Check%20&%20fix%20styling?label=code%20style)](https://github.com/qmonitor/laravel-qmonitor-collector/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 
 Qmonitor enables you to monitor queue tasks from all your Laravel apps. This package will collect and send data and telemetry to qmonitor.io from where you can then inspect and analyze your queue jobs.
 
@@ -39,7 +39,7 @@ This is the content of the published config file:
 ```php
 return [
     /**
-     * Master toggle for Qmonitor event tracking
+     * Main toggle for Qmonitor event tracking
      */
     'enabled' => env('QMONITOR_ENABLED', true),
 
@@ -63,7 +63,6 @@ return [
      * A list of jobs you don't want to monitor
      */
     'dont_monitor' => [
-        // \Qmonitor\Jobs\QmonitorPingJob::class,
         // \Qmonitor\Jobs\QmonitorHeartbeatJob::class,
         // ...
         // eg. \App\Jobs\UntrackedJob::class,
