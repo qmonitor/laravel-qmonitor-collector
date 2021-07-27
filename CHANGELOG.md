@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-qmonitor-collector` will be documented in this file.
 
+## 2.0.2 - 2021-07-27
+- fixed heartbeat payload sending logic
+
 ## 2.0.1 - 2021-07-06
 - increased release time when the heartbeat endpoint responds with a 429 status code;
 - added an `uuid` to heartbeat payload to help with deduplication;
