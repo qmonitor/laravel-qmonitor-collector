@@ -11,7 +11,7 @@ class Qmonitor
     /**
      * @var string
      */
-    const VERSION = '2.0.1';
+    const VERSION = '2.0.2';
 
     /**
      * Collector version
@@ -75,8 +75,8 @@ class Qmonitor
     {
         return app(ClientInterface::class)
             ->timeout(5)
-            ->withSignature(static::calculateSignature(static::heartbeatPayload(), config('qmonitor.signing_secret')))
-            ->withPayload(static::heartbeatPayload())
+            ->withSignature(static::calculateSignature($payload = static::heartbeatPayload(), config('qmonitor.signing_secret')))
+            ->withPayload($payload)
             ->sendTo(static::heartbeatUrl());
     }
 
