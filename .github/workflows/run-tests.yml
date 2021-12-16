@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    if: ! (matrix.php == 8.1 && matrix.laravel == 7.*)
     strategy:
       fail-fast: true
       matrix:
