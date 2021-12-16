@@ -2,6 +2,8 @@
 
 All notable changes to `laravel-qmonitor-collector` will be documented in this file.
 
+## [Unreleased](https://github.com/qmonitor/laravel-qmonitor-collector/compare/v2.0.2...2.x)
+
 ## 2.0.2 - 2021-07-27
 - fixed heartbeat payload sending logic
 
