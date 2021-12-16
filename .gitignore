@@ -8,5 +8,6 @@ docs
 phpunit.xml
 psalm.xml
 testbench.yaml
+composer.lock
 vendor
 .DS_Store
